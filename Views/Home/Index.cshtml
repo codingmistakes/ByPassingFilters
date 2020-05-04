@@ -1,0 +1,74 @@
+﻿@model List<ByPassingFilters.Models.Quote>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<center>
+    <div class="row" style="position: relative">
+        <div class="col-md-12">
+            <h2>Search Quote</h2>
+        </div>
+    </div>
+    <br />
+    <div style="width:50%">
+        <form action="/Home/Search" method="post">
+            <div class="input-group mb-3">
+                <input type="text" value="@ViewBag.Search" name="search" class="form-control" placeholder="Enter your search criteria">
+                <div class="input-group-append">
+                    <button class="btn btn-info" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</center>
+
+@if (!String.IsNullOrEmpty(ViewBag.Search))
+{
+    <br />
+    <h5>
+        You searched for
+        <i style="color :orangered; cursor: pointer; text-decoration:underline" onclick="var term = '@Html.Raw(ViewBag.Search)'; document.location = '/Home/Search?search=' + escape(term)">
+            "@Html.Raw(ViewBag.Search)"
+        </i>
+    </h5>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <br />
+
+    <table class="table table-hover table-striped">
+        <caption>@Model.Count quotes listed</caption>
+        <tbody>
+            @foreach (ByPassingFilters.Models.Quote quote in Model)
+            {
+                <tr>
+                    <td>
+                        <blockquote class="blockquote text-right">
+                            <p class="mb-0">@quote.Content</p>
+                            <footer class="blockquote-footer">
+                                Author: <cite title="Source Title">@quote.Author</cite>
+                            </footer>
+                        </blockquote>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<script>
+    function trend() {
+        $.ajax({
+            type: "GET",
+            url: "/Home/Trend",
+            headers: {
+                'X-Company-Ajax': 'true'
+            },
+            data: {
+                q: "@Html.Raw(ViewBag.Search)"
+            }
+        }).always(function (data) { });
+    }
+</script>
